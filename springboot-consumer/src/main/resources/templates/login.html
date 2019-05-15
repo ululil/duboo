@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>Insert title here</title>
+
+    <!-- 引入easyui样式文件 -->
+    <link type="text/css" rel="stylesheet" href="../js/jquery-easyui-1.5/themes/default/easyui.css">
+    <!-- 引入easyui图标样式文件 -->
+    <link type="text/css" rel="stylesheet" href="../js/jquery-easyui-1.5/themes/icon.css">
+    <!-- 引入jquery js文件 -->
+    <script type="text/javascript" src="../js/jquery-easyui-1.5/jquery.min.js"></script>
+    <!-- 引入easyui的js文件 -->
+    <script type="text/javascript" src="../js/jquery-easyui-1.5/jquery.easyui.min.js"></script>
+    <!-- 引文easyui支持中文js -->
+    <script type="text/javascript" src="../js/jquery-easyui-1.5/locale/easyui-lang-zh_CN.js"></script>
+
+    <script type="text/javascript" src="../js/jquery-easyui-1.5/util-js.js"></script>
+
+</head>
+<body>
+<div class="easyui-dialog" data-options="title:'登陆',modal:true,buttons:[{
+    text:'登陆',
+    iconCls:'icon-man',
+    plain:true,
+    handler:function(){
+    login();
+    }
+     }]" style="width:500px;height:400px">
+
+    <table>
+        <tr>
+            <td>账号:</td>
+            <td><input type="text" id="account" name="account"  class="easyui-textbox"></td>
+        </tr>
+        <tr>
+            <td>密码:</td>
+            <td><input type="text" id="password" name="password" class="easyui-textbox"></td>
+        </tr>
+
+    </table>
+</div>
+</body>
+<script type="text/javascript">
+
+
+    function login(){
+
+        var account=$("#account").val()
+        var password=$("#password").val()
+
+
+        $.ajax({
+            url:'../main/login',
+            type:'post',
+            data:{
+                account:account,
+                password:password
+
+            },
+            dataType:'json',
+            success:function(data){
+                if(data.code!=0){
+                    $.messager.alert('提示',data.msg,'error');
+                }else{
+
+                    window.location.href="../page/toMain"
+                }
+
+            }
+
+        })
+    }
+
+
+
+
+</script>
+</html>

@@ -1,0 +1,256 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>Insert title here</title>
+    <!-- 引入easyui样式文件 -->
+    <link type="text/css" rel="stylesheet" href="../js/jquery-easyui-1.5/themes/default/easyui.css">
+    <!-- 引入easyui图标样式文件 -->
+    <link type="text/css" rel="stylesheet" href="../js/jquery-easyui-1.5/themes/icon.css">
+    <!-- 引入jquery js文件 -->
+    <script type="text/javascript" src="../js/jquery-easyui-1.5/jquery.min.js"></script>
+    <!-- 引入easyui的js文件 -->
+    <script type="text/javascript" src="../js/jquery-easyui-1.5/jquery.easyui.min.js"></script>
+    <!-- 引文easyui支持中文js -->
+    <script type="text/javascript" src="../js/jquery-easyui-1.5/locale/easyui-lang-zh_CN.js"></script>
+
+    <script type="text/javascript" src="../js/jquery-easyui-1.5/util-js.js"></script>
+
+</head>
+<body>
+<div class="easyui-layout" data-options="fit:true">
+
+
+    <div data-options="region:'west',title:'123'" style="width:30%">
+        <table id="powerTable">
+            <a id="addBtn" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true">新增</a>
+
+        </table >
+
+
+    </div>
+    <div id="userDialog" class="easyui-dialog" data-options="title:'用户',modal:true,closed:true,buttons:[{
+		text:'保存',
+		plain:true,
+		iconCls:'icon-save',
+		handler:function(){
+			saveUser();
+		}
+	}]" style="width: 300px; height: 200px">
+        <form id="userForm" method="post">
+            <table>
+                <tr>
+                    <td>用户名</td>
+                    <td>
+
+                        <input type="text" name="name" class="easyui-textbox"/> </td>
+                </tr>
+
+            </table>
+        </form>
+    </div>
+    <div data-options="region:'center',title:'123',footer:'#footer'" style="width:30%">
+
+        <input type="hidden" id="hideenRole">
+
+        <ul id="powerTree"></ul>
+        <div id="rightMenu" class="easyui-menu" style="width:120px">
+            <div onclick="append()" data-options="iconCls:'icon-add'">Append</div>
+            <div onclick="remove()" data-options="iconCls:'icon-remove'">Remove</div>
+            <div onclick="update()" data-options="iconCls:'icon-edit'">update</div>
+        </div>
+        <div id="quanxian" class="easyui-dialog"  data-options="title:'授权',modal:true,closed:true,buttons:[{
+  	text:'保存',
+		plain:true,
+		iconCls:'icon-save',
+		handler:function(){
+			saveAuth();
+		}
+  }]" style="width:300px;height:300px">
+            <form method="post" id="powerForm">
+                <table>
+                    <tr>
+
+                        <td>节点名称</td>
+                        <td>
+                            <input type="hidden" name="id" id="idid">
+                            <input type="hidden" name="pid" id="hiddenpwoer">
+                            <input type="text" name="text" class="easyui-textbox"> </td>
+                    </tr>
+                    <td>url</td>
+                    <td><input type="url" name="url" class="easyui-textbox"> </td>
+                    </tr>
+
+                </table>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <div data-options="region:'east',title:'123'" style="width:40%">
+        <div id="toolbar">
+            <a id="addMuneBtn" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true">add</a>
+            <a id="delMuneBtn" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true">delete</a>
+            <a id="xiugaiBtn" class="easyui-linkbutton" data-options="iconCls:'icon-lock',plain:true">修改</a>
+        </div>
+        <table id="muneTable">
+
+        </table >
+        <div id="MuneDialog" class="easyui-dialog" data-options="title:'用户',modal:true,closed:true,buttons:[{
+		text:'保存',
+		plain:true,
+		iconCls:'icon-save',
+		handler:function(){
+			saveMune();
+		}
+	}]" style="width: 300px; height: 200px">
+            <form id="muneForm" method="post">
+                <table id="muneTable">
+                    <tr>
+                        <td>菜单名称</td>
+                        <td>
+                            <input type="hidden" name="id">
+                            <input type="text" name="name" class="easyui-textbox"/>
+                            <input type="hidden" id="munuidds" name="powerId">
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <td>请求地址</td>
+                        <td>
+                            <input type="text" name="path" class="easyui-textbox"/> </td>
+                    </tr>
+                    <tr>
+                        <td>说明</td>
+                        <td>
+                            <input type="text" name="remark" class="easyui-textbox"/> </td>
+                    </tr>
+
+                </table>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+<div id="footer">
+    <div style="float: right">
+        <a class="easyui-linkbutton" onclick="savePower()" data-options="iconCls:'icon-save',plain:true">保存</a>
+    </div>
+
+</div>
+</body>
+<script type="text/javascript" th:inline="none">
+
+
+
+
+
+
+
+
+
+
+    $(function(){
+
+        inintPower();
+        findRole(-1);
+
+    })
+
+    //保存角色权限
+    savePower =function(){
+        var roleId=$("#hideenRole").val();
+        if(roleId ==null || roleId ==-1||roleId ==''){
+            $.messager.alert('提示','please点击查看权限','warning')
+            return ;
+        }
+        var tree=$("#powerTree").tree('getChecked');
+        var ids="";
+        for (var i = 0; i < tree.length; i++) {
+            ids+=ids=='' ? tree[i].id : ","+ tree[i].id;
+
+        }
+        alert(ids)
+        $.ajax({
+            url:'../main/addPower',
+            type:'post',
+            data:{
+                roleId:roleId,
+                powerIds:ids
+            },
+            dataType:'json',
+            success:function(data){
+                if(data){
+                    $.messager.alert('提示','保存成功','info')
+                }else{
+                    $.messager.alert('提示','保存失败','error')
+                }
+            }
+        })
+
+
+
+
+
+    };
+
+
+
+
+    function inintPower(){
+        $("#powerTable").datagrid({
+            url:'../main/findNavTreeCommon2',
+            fit:true,
+            columns:[[
+                {field:'xxx',checkbox:true},
+                {field:'id',title:'id'},
+                {field:'name',title:'name'},
+                {field:'qqq',title:'caoz',formatter:function(value,row,index){
+// 			    	<a href="javascript:findRole('+row.id+');">查看权限</a>
+                        return '<input type="button" ondblclick="findRole('+row.id+')" value="双击查看权限">';
+
+                    }}
+            ]]
+        })
+    }
+    //根据角色id查询权限树
+    findRole=function(roleId){
+
+
+        $("#hideenRole").val(roleId);
+        $("#powerTree").tree({
+            url:'../main/findRole?roleId='+roleId,
+            parentField:'pid',
+            lines:true,
+            checkbox:true,
+
+            onDblClick:function(node){
+                var powerId =node.id;
+                $("#munuidds").val(powerId);
+
+
+            },
+
+            onContextMenu:function(e,node){
+                //阻止事件冒泡
+                e.preventDefault();  		// select the node
+                //查找节点
+                $('#powerTree').tree('select', node.target);  		// display context menu
+                //显示快捷菜单
+                $('#rightMenu').menu('show', {
+
+                    left: e.pageX,
+                    top: e.pageY
+                });
+
+            }
+
+        })
+
+    } ;
+</script>
+</html>

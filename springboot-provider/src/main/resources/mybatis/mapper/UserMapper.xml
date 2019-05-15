@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jk.dao.UserMapper" >
+  
+  
+   <select id="queryUserList" resultType="com.jk.model.User">
+      	select group_concat(tr.name) as roleName,tu.id,tu.name,tu.age,tu.account,tu.password,tu.sex,tu.headImg,tu.status,td.text as deptName,tap.name as provinceName,tac.name as cityName from t_user tu
+			left join t_dept td  on tu.deptid = td.id
+			left join t_area tap on tu.provincecode = tap.id
+				left join t_area tac on tu.citycode = tac.id
+				left join t_user_role tur on tu.id = tur.userId
+				left join t_role tr on tur.roleId = tr.id
+   </select>
+
+	<insert id="saverPower" parameterType="com.jk.model.RolePawer" >
+		insert into t_roler_power(roleId,powerId) values
+
+		<foreach collection="list" index="index" item="item" separator=",">
+			(#{item.roleId},#{item.powerId})
+		</foreach>
+	</insert>
+ 
+</mapper>

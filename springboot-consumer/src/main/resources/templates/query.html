@@ -1,0 +1,250 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+<head>
+    <title>Insert title here</title>
+
+    <!-- 引入easyui样式文件 -->
+    <link type="text/css" rel="stylesheet" href="../js/jquery-easyui-1.5/themes/default/easyui.css">
+    <!-- 引入easyui图标样式文件 -->
+    <link type="text/css" rel="stylesheet" href="../js/jquery-easyui-1.5/themes/icon.css">
+    <!-- 引入jquery js文件 -->
+    <script type="text/javascript" src="../js/jquery-easyui-1.5/jquery.min.js"></script>
+    <!-- 引入easyui的js文件 -->
+    <script type="text/javascript" src="../js/jquery-easyui-1.5/jquery.easyui.min.js"></script>
+    <!-- 引文easyui支持中文js -->
+    <script type="text/javascript" src="../js/jquery-easyui-1.5/locale/easyui-lang-zh_CN.js"></script>
+
+    <script type="text/javascript" src="../js/jquery-easyui-1.5/util-js.js"></script>
+
+    <link rel="stylesheet" href="../js/uploadify/uploadify.css">
+
+    <script type="text/javascript" src="../js/uploadify/jquery.uploadify.min.js"></script>
+
+
+</head>
+<body>
+
+
+
+
+<table id="userTable"></table>
+
+
+
+
+
+<div id="toolbar">
+    姓名查询：<input type="text" class="easyui-textbox" id="name">
+
+
+    <a id="search" class="easyui-linkbutton" data-options="iconCls:'icon-search'">搜索</a>
+
+    <br>
+    <a id="addBtn" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true">新增</a>
+    <a id="deleteBtn" class="easyui-linkbutton" data-options="iconCls:'icon-cancel',plain:true">删除</a>
+    <a id="xiugaiBtn" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true">修改</a>
+</div>
+<div id="userDialog" class="easyui-dialog" data-options="title:'用户',modal:true,closed:true,buttons:[{
+		text:'保存',
+		plain:true,
+		iconCls:'icon-save',
+		handler:function(){
+			saveUser();
+		}
+	}]" style="width: 700px; height: 500px">
+    <form id="userForm" method="post">
+        <table>
+            <tr>
+                <td>用户名</td>
+                <td>
+                    <input type="hidden" name="id">
+                    <input type="text" name="name" class="easyui-textbox"/> </td>
+            </tr>
+            <tr>
+                <td>
+                    <img id="showImg" src="" width="50px" height="50px"/>
+                    <input id="hideImg" type="hidden" name="headImg"/>
+
+                </td>
+                <td> <input type="file" id="uploadify" style="width:200px;"/> </td>
+            </tr>
+            <tr>
+                <td>年龄</td>
+                <td> <input type="text" name="age" class="easyui-textbox"/> </td>
+            </tr>
+            <tr>
+                <td>性别</td>
+                <td>
+                    <label>
+                        <input type="radio" name="sex" value="1"/>男
+                    </label>
+                    <label>
+                        <input type="radio" name="sex" value="0"/>女
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <td>账号</td>
+                <td>
+                    <input type="text" class="easyui-textbox" name="account"/>
+                </td>
+            </tr>
+            <tr>
+                <td>密码</td>
+                <td>
+                    <input id="password" type="text" class="easyui-passwordbox" name="password"/>
+                    <span id="mimass"></span>
+                </td>
+            </tr>
+            <tr>
+                <td>确认密码</td>
+                <td>
+                    <input id="password2" type="text" class="easyui-passwordbox" name="password2"/>
+                    <span id="mimas"></span>
+                </td>
+            </tr>
+            <tr>
+                <td>部门</td>
+                <td>
+                    <input id="deptSelect" name="deptId" class="easyui-combotree" style="width: 150px">
+                </td>
+            </tr>
+            <tr>
+                <td>地区</td>
+                <td>
+                    <select id="provinceSelect" name="provinceCode" class="easyui-combobox" style="width: 100px"></select>
+                    -
+                    <select id="citySelect" name="cityCode" class="easyui-combobox" style="width: 100px"></select>
+                </td>
+            </tr>
+            <tr>
+                <td>角色</td>
+                <td>
+                    <select id="roleSelect" name="roleId" class="easyui-combobox" style="width: 100px"></select>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+</body>
+<script type="text/javascript" th:inline="none">
+
+
+
+
+
+
+
+
+    //加载表单
+    $(function(){
+        initUserTable();
+    })
+
+
+
+
+
+
+
+
+
+    function initUserTable(){
+        $("#userTable").datagrid({
+            url:'../main/query',
+            toolbar:'#toolbar',
+            fit:true,
+            pagination:true,
+            pageSize:2,
+            pageList:[2,4,6,8,10],
+            columns:[[
+
+                {field:'aa',title:'主鍵id',checkbox:true},
+                {field:'id',title:'主鍵id'},
+                {field:'headImg',title:'头像',formatter:function(value,row,index){
+                        return "<img src='"+value+"' width='50px' height='50px'/>";
+                    }},
+                {field:'name',title:'用户名'},
+                {field:'age',title:'年龄',formatter:function(value,row,index){
+                        return value+"岁";
+                    }},
+                {field:'sex',title:'性别',formatter:function(value,row,index){
+                        return value == 1 ? "男" : "女";
+                    }},
+                {field:'account',title:'账号'},
+                {field:'password',title:'密码'},
+                {field:'deptName',title:'部门'},
+                {field:'roleName',title:'角色'},
+                {field:'provinceName',title:'地区',formatter:function(value,row,index){
+                        return value + "-" + row.cityName;
+                    }},
+                {field:'status',title:'状态',formatter:function(value,row,index){
+
+                        return value == 0 ? "正常" : "<font color='red'>锁定</font>";
+                    }},
+                {field:'xx',title:'caoz',formatter:function(value,row,index){
+
+
+                        var se =row.status==0 ? "<a href='javascript:updateOne("+row.id+")'>锁定</a>" :"<a href='javascript:updateOne2("+row.id+")'>解鎖</a>";
+                        return se;
+                    }}
+            ]]
+        })
+
+    }
+
+
+
+
+
+    //上传插件
+    $("#uploadify").uploadify({
+        //插件自带  不可忽略的参数
+        'swf': '<%=request.getContextPath()%>/js/uploadify/uploadify.swf',
+        //前台请求后台的url 不可忽略的参数
+        'uploader': '<%=request.getContextPath()%>/user/upload.do',
+        //给div的进度条加背景 不可忽略
+        'queueID': 'fileQueue',
+        //上传文件文件名
+        'fileObjName' : 'hideImg',
+        //给上传按钮设置文字
+        'buttonText': '上传图片',
+        //设置文件是否自动上传
+        'auto': true,
+        //可以同时选择多个文件 默认为true  不可忽略
+        'multi': false,
+        //上传后队列是否消失
+        'removeCompleted': true,
+        //允许上传的文件后缀
+        'fileExt': '*.jpg;*.gif;*.png',
+        //
+        'cancelImg': '<%=request.getContextPath()%>/js/uploadify/uploadify-cancel.png',
+        //队列消失时间
+        'removeTimeout' : 1,
+        //上传文件的个数，项目中一共可以上传文件的个数
+        'uploadLimit':  -1,
+        'fileTypeExts': '*.jpg;*.png',
+        //开始执行上传
+        'onUploadStart':function(files){
+            //$.messager.progress({ title:'提示',msg:'上传中...' });
+        },
+        //上传失败
+        'onUploadError':function(){
+            //$.messager.progress('close');
+            //$.messager.alert('提示','上传失败');
+            alert("上传失败");
+        },
+        //成功回调函数 file：文件对象。data后台输出数据
+        'onUploadSuccess':function(file,data,response){
+            //$.messager.progress('close');
+            //  alert(data+file.name)
+            data = eval(data);      // 图片出现 “” 去除引号的
+            var imgurl = "http://<%= request.getServerName()%>:<%=request.getServerPort()%><%=request.getContextPath()%>/"+data
+            $("#showImg").attr("src",imgurl);
+            $('#hideImg').val(imgurl);
+        }
+    });
+</script>
+</html>
